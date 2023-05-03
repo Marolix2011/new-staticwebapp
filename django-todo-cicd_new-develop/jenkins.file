@@ -1,0 +1,38 @@
+pipeline{
+    agent any
+    
+    stages {
+        stage('change directory'){
+            steps{
+            dir('cd django-todo-cicd_new-develop') {
+                //sh 'cd django-todo-cicd_new-develop'
+               }
+            }
+        }
+        stage('checkout code') {
+            steps{
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/jyothi-jyo1998/new-staticwebapp.git']])
+            }
+        }
+        stage('build django'){
+            steps{
+                git credentialsId: 'a7f700e7-98a4-4337-bd4a-aac2db5fd8fb', url: 'https://github.com/jyothi-jyo1998/new-staticwebapp.git'
+                dir('cd django-todo-cicd_new-develop') {
+                 sh 'pyenv install 3.8.12'
+                sh 'pyenv global 3.8.12'
+                sh 'pip install -r requirements.txt'
+}
+            }
+        }
+        stage('build docker image'){
+            steps{
+                sh 'docker build -t jyoo .'
+            }
+        }
+        stage('build container'){
+            steps{
+                sh 'docker run -dit -p 8010:8010 jyoo jyoo'
+            }
+        }
+    }
+}
