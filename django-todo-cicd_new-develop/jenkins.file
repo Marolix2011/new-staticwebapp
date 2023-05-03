@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('git checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/jyothi-jyo1998/new-staticwebapp.git']])
+            }
+        }
+        stage('changedirectory'){
+            steps{
+                sh 'cd django-todo-cicd_new-develop'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'cd django-todo-cicd_new-develop'
+                sh 'sudo docker build -t django .'
+                
+            }
+        }
+    }
+}
